@@ -1,6 +1,8 @@
 from typing import List
 from statistics import mean
+
 class Student():
+    
     rut:int 
     nombre:str
     notas:List[float]

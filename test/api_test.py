@@ -7,10 +7,16 @@ class TestAPI(unittest.TestCase):
         return requests.get(url).status_code
 
     def test_get_students(self):
-        urls = ["http://localhost:5000/", "http://localhost:5000/students"]
-        for url in urls:
+        urls = [
+            "http://localhost:5000/", 
+            "http://localhost:5000/students", 
+            "http://localhost:5000/students/123asd",
+            "http://localhost:5000/students/123123"
+        ]
+        codes = [200, 200, 400, 200]
+        for index, url in enumerate(urls):
             code = self.get_url_status(url)
-            self.assertEqual(code, 200, "Consulta fallida")
+            self.assertEqual(code, codes[index], "Consulta fallida")
 
 
 if __name__ == "__main__":
