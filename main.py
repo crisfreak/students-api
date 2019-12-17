@@ -25,8 +25,25 @@ def get_students():
         )
     elif request.method == "POST":
         form = request.json
-        print(form)
-        return "POST", 200
+        #validación de la forma de ingreso de datos
+        if 'rut' in form and 'nombre' in form and 'notas' in form:
+            stud = Student (form['rut'], form['nombre'],form['notas'])
+            students.append(stud)
+            response = Response(
+                json.dumps({"msg": "Alumno ingresado exitosamente"}),
+                status=HTTPStatus.CREATED,
+                mimetype="application/json"
+            )
+            return response
+        
+        else:
+            response = Response(
+                json.dumps({"msg": "No se ingresaron los datos de manera correcta"}), 
+                status=HTTPStatus.BAD_REQUEST,
+                mimetype="application/json"
+                )
+            return response   
+
     else:
         response = Response(
             json.dumps({"msg" : "Método inválido"}), 
@@ -44,9 +61,17 @@ def get_student(rut : str):
             mimetype="application/json"
         )
     else:
-        rut = int(rut)
-        print(rut)
-        return "GET", 200
+        for i in range(len(students)):
+            if int(rut) == students[i].rut:
+                response = Response(
+                    json.dumps(
+                        students[i], 
+                        default = lambda s: s.toDict()
+                    ), 
+                    status=HTTPStatus.OK,
+                    mimetype="application/json"
+                )               
+                return response
     return response
 
 if __name__ == "__main__":
