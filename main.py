@@ -23,19 +23,32 @@ def get_students():
             status=HTTPStatus.OK,
             mimetype="application/json"
         )
-    elif request.method == "POST":
+    else:
         form = request.json
+        #variables que contienen el rut, nombre y notas respectivamente
+        rut = form['rut']
+        name = form ['nombre']
+        grades = form['notas']
         #validación de la forma de ingreso de datos
         if 'rut' in form and 'nombre' in form and 'notas' in form:
-            stud = Student (form['rut'], form['nombre'],form['notas'])
-            students.append(stud)
+            for stud in students:
+                #Verifica que no exista el rut que se está ingresando
+                if rut == stud.rut:
+                    response = Response(
+                    json.dumps({"msg": "Este Alumno ya fue ingresado"}),
+                    status=HTTPStatus.NOT_ACCEPTABLE,
+                    mimetype="application/json"
+                    )
+                    return response
+            #Luego de verificar que no exista, procede a agregarlo
+            student = Student (rut, name,grades)
+            students.append(student)
             response = Response(
                 json.dumps({"msg": "Alumno ingresado exitosamente"}),
                 status=HTTPStatus.CREATED,
                 mimetype="application/json"
-            )
-            return response
-        
+                )
+        #Entrega este mensaje en caso de no ingresar la totalidad de los datos        
         else:
             response = Response(
                 json.dumps({"msg": "No se ingresaron los datos de manera correcta"}), 
@@ -43,17 +56,11 @@ def get_students():
                 mimetype="application/json"
                 )
             return response   
-
-    else:
-        response = Response(
-            json.dumps({"msg" : "Método inválido"}), 
-            status=HTTPStatus.METHOD_NOT_ALLOWED, 
-            mimetype="application/json"
-        )
     return response
 
 @app.route("/students/<rut>", methods=["GET"])
 def get_student(rut : str):
+    #Validación de que se este ingresando un rut y no otros caracteres
     if rut.isdigit() != True:
         response = Response(
             json.dumps({"msg" : "Rut inválido"}), 
@@ -61,18 +68,29 @@ def get_student(rut : str):
             mimetype="application/json"
         )
     else:
-        for i in range(len(students)):
-            if int(rut) == students[i].rut:
+        rut = int(rut)
+        #Busca al estudiante según su rut
+        for stud in students:
+            if rut == stud.rut:
                 response = Response(
                     json.dumps(
-                        students[i], 
+                        stud, 
                         default = lambda s: s.toDict()
                     ), 
                     status=HTTPStatus.OK,
                     mimetype="application/json"
-                )               
-                return response
+                )
+                return response               
+        #Mensaje en caso de que no encontrarse el rut
+        response = Response(
+            json.dumps(
+                {"msg": "No existe alumno ingresado con ese rut"}
+            ), 
+            status=HTTPStatus.NOT_FOUND,
+            mimetype="application/json"
+        )               
+        return response
     return response
-
+    
 if __name__ == "__main__":
     app.run()
