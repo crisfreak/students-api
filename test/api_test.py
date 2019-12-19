@@ -9,11 +9,12 @@ class TestAPI(unittest.TestCase):
     def test_get_students(self):
         urls = [
             "http://localhost:5000/", 
-            "http://localhost:5000/students", 
+            "http://localhost:5000/students",
+            "http://localhost:5000/students/",
             "http://localhost:5000/students/123asd",
-            "http://localhost:5000/students/123123"
+            "http://localhost:5000/students/19111000"
         ]
-        codes = [200, 200, 400, 200]
+        codes = [200, 200, 200, 400, 404]
         for index, url in enumerate(urls):
             code = self.get_url_status(url)
             self.assertEqual(code, codes[index], "Consulta fallida")

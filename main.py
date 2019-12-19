@@ -10,7 +10,10 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello():
-    return "Hello World!", 200
+    response = Response(
+        "Los endpoints dispnibles son: <br/> GET /students<br/> GET /students/:rut <br/> POST /students"
+    )
+    return response
 
 @app.route("/students/", methods=["GET", "POST"])
 def get_students():
