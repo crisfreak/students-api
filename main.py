@@ -11,7 +11,7 @@ app = Flask(__name__)
 @app.route("/")
 def hello():
     response = Response(
-        "Los endpoints dispnibles son: <br/> GET /students<br/> GET /students/:rut <br/> POST /students"
+        "Los endpoints disponibles son: <br/> GET /students<br/> GET /students/:rut <br/> POST /students"
     )
     return response
 
@@ -96,4 +96,4 @@ def get_student(rut : str):
     return response
     
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=False, host='0.0.0.0')
